@@ -135,6 +135,9 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 vim.keymap.set('n', '<leader>w', ':noautocmd w<CR>', { desc = 'Save without formatting' })
 
+vim.keymap.set('n', 'j', 'gj', { desc = 'Move down soft wrapped line' })
+vim.keymap.set('n', 'k', 'gk', { desc = 'Move up soft wrapped line' })
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
