@@ -100,6 +100,9 @@ vim.o.colorcolumn = '150'
 
 vim.o.wrap = true
 
+-- Save buffer whenever navigating away from the file
+vim.o.autowriteall = true
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
