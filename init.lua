@@ -88,8 +88,11 @@ vim.g.neovide_scroll_animation_length = 0.00
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
-local shell = vim.fn.executable 'pwsh' == 1 and 'pwsh' or 'powershell'
-vim.o.shell = shell
+if vim.fn.has 'linux' then
+  vim.o.shell = vim.fn.executable 'pwsh' == 1 and 'pwsh' or 'powershell'
+else
+  vim.o.shell = 'fish'
+end
 
 vim.o.expandtab = true
 vim.o.tabstop = 2
