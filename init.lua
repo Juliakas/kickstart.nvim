@@ -125,6 +125,16 @@ vim.diagnostic.config {
 
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
   jump = { float = true },
+
+  -- Neovim 0.10+ requires explicit sign text (no longer has defaults)
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = vim.g.have_nerd_font and '󰅚' or 'E',
+      [vim.diagnostic.severity.WARN] = vim.g.have_nerd_font and '󰀦' or 'W',
+      [vim.diagnostic.severity.INFO] = vim.g.have_nerd_font and '󰋽' or 'I',
+      [vim.diagnostic.severity.HINT] = vim.g.have_nerd_font and '󰌵' or 'H',
+    },
+  },
 }
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -225,11 +235,12 @@ require('lazy').setup({
     ---@diagnostic disable-next-line: missing-fields
     opts = {
       signs = {
-        add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-        change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-        delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-        topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-        changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
+        -- add          = { text = '▎' }, ---@diagnostic disable-line: missing-fields
+        -- change       = { text = '▎' }, ---@diagnostic disable-line: missing-fields
+        -- delete       = { text = '' }, ---@diagnostic disable-line: missing-fields
+        -- topdelete    = { text = '' }, ---@diagnostic disable-line: missing-fields
+        -- changedelete = { text = '▎' }, ---@diagnostic disable-line: missing-fields
+        -- untracked    = { text = '▎' }, ---@diagnostic disable-line: missing-fields
       },
     },
   },
@@ -599,9 +610,7 @@ require('lazy').setup({
       local base_on_attach = vim.lsp.config.eslint.on_attach
       vim.lsp.config('eslint', {
         on_attach = function(client, bufnr)
-          if not base_on_attach then
-            return
-          end
+          if not base_on_attach then return end
 
           base_on_attach(client, bufnr)
           vim.api.nvim_create_autocmd('BufWritePre', {
