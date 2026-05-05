@@ -26,7 +26,7 @@ return {
     local statusline = require 'mini.statusline'
     statusline.setup { use_icons = vim.g.have_nerd_font }
 
-    -- Override the cursor position section to show LINE:COLUMN
-    statusline.section_location = function() return '%2l:%-2v' end
+    -- Override the cursor position section to show LINE:COLUMN  TOTAL  PERCENTAGE
+    statusline.section_location = function() return '%2l:%-2v T:%L %p%%' end
   end,
 }
