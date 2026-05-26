@@ -84,6 +84,15 @@ return {
       cssls = {},          -- CSS / SCSS / Less
       cssmodules_ls = {},  -- CSS Modules class name completion
       stylua = {},         -- Lua formatter (used via conform, not really an LSP)
+      gopls = {            -- Golang
+        settings = {
+          gopls = {
+            analyses = { unusedparams = true },
+            staticcheck = true,
+            gofumpt = true,
+          },
+        },
+      },
 
       -- Special Lua configuration that teaches lua_ls about the Neovim API
       lua_ls = {

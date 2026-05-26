@@ -36,6 +36,7 @@ return {
     -- Add more entries here to format additional languages
     formatters_by_ft = {
       lua = { 'stylua' },
+      go = { 'gofumpt' },
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
     },
   },
