@@ -19,6 +19,9 @@ return {
   ---@type neotree.Config
   opts = {
     filesystem = {
+      filtered_items = {
+        always_show = { '.github' },
+      },
       window = {
         mappings = {
           ['\\'] = 'close_window',

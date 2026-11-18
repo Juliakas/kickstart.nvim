@@ -24,6 +24,16 @@ return {
       defaults = {
         -- Truncate long file paths from the left so the filename is always visible
         path_display = { 'truncate' },
+        vimgrep_arguments = {
+          'rg',
+          '--color=never',
+          '--no-heading',
+          '--with-filename',
+          '--line-number',
+          '--column',
+          '--smart-case',
+          '--hidden', -- also search dot-directories like .github
+        },
       },
       pickers = {
         find_files = {
