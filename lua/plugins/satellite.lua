@@ -7,6 +7,8 @@ local gh = require('config.pack').gh
 vim.pack.add { gh 'lewis6991/satellite.nvim' }
 
 require('satellite').setup {
+  -- Transparency, 0 (solid) to 100 (invisible); the default 50 blends in too much
+  winblend = 20,
   -- Sidebars and panels where a scrollbar only adds noise
   excluded_filetypes = {
     'neo-tree',
