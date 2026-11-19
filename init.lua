@@ -30,6 +30,7 @@ require 'plugins.catppuccin'
 require 'plugins.mini' -- mini.icons must come before plugins that want web-devicons
 require 'plugins.guess-indent'
 require 'plugins.gitsigns'
+require 'plugins.satellite' -- shows gitsigns hunks in the bar
 require 'plugins.which-key'
 require 'plugins.todo-comments'
 require 'plugins.telescope'
