@@ -2,51 +2,40 @@
 -- It supports many formatters and falls back to the LSP formatter if none is configured.
 -- https://github.com/stevearc/conform.nvim
 
----@module 'lazy'
----@type LazySpec
-return {
-  'stevearc/conform.nvim',
-  event = { 'BufWritePre' },
-  cmd = { 'ConformInfo' },
-  keys = {
-    {
-      '<leader>f',
-      function() require('conform').format { async = true, lsp_format = 'fallback' } end,
-      mode = '',
-      desc = '[F]ormat buffer',
-    },
-  },
-  ---@module 'conform'
-  ---@type conform.setupOpts
-  opts = {
-    notify_on_error = false,
-    format_on_save = function(bufnr)
-      -- Disable format-on-save for C/C++ which lack a universal style standard
-      local disable_filetypes = { c = true, cpp = true }
-      if disable_filetypes[vim.bo[bufnr].filetype] then
-        return nil
-      else
-        return {
-          timeout_ms = 500,
-          lsp_format = 'fallback',
-        }
-      end
-    end,
-    -- Map filetypes to the formatter(s) to use
-    -- Add more entries here to format additional languages
-    formatters_by_ft = {
-      lua = { 'stylua' },
-      go = { 'gofumpt' },
-      javascript = { 'prettierd', 'prettier', stop_after_first = true },
-      typescript = { 'prettierd', 'prettier', stop_after_first = true },
-      javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-      typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-      json = { 'prettierd', 'prettier', stop_after_first = true },
-      jsonc = { 'prettierd', 'prettier', stop_after_first = true },
-      yaml = { 'prettierd', 'prettier', stop_after_first = true },
-      markdown = { 'prettierd', 'prettier', stop_after_first = true },
-      html = { 'prettierd', 'prettier', stop_after_first = true },
-      css = { 'prettierd', 'prettier', stop_after_first = true },
-    },
+local gh = require('config.pack').gh
+
+vim.pack.add { gh 'stevearc/conform.nvim' }
+
+require('conform').setup {
+  notify_on_error = false,
+  format_on_save = function(bufnr)
+    -- Disable format-on-save for C/C++ which lack a universal style standard
+    local disable_filetypes = { c = true, cpp = true }
+    if disable_filetypes[vim.bo[bufnr].filetype] then
+      return nil
+    else
+      return {
+        timeout_ms = 500,
+        lsp_format = 'fallback',
+      }
+    end
+  end,
+  -- Map filetypes to the formatter(s) to use
+  -- Add more entries here to format additional languages
+  formatters_by_ft = {
+    lua = { 'stylua' },
+    go = { 'gofumpt' },
+    javascript = { 'prettierd', 'prettier', stop_after_first = true },
+    typescript = { 'prettierd', 'prettier', stop_after_first = true },
+    javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+    typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+    json = { 'prettierd', 'prettier', stop_after_first = true },
+    jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+    yaml = { 'prettierd', 'prettier', stop_after_first = true },
+    markdown = { 'prettierd', 'prettier', stop_after_first = true },
+    html = { 'prettierd', 'prettier', stop_after_first = true },
+    css = { 'prettierd', 'prettier', stop_after_first = true },
   },
 }
+
+vim.keymap.set('', '<leader>f', function() require('conform').format { async = true, lsp_format = 'fallback' } end, { desc = '[F]ormat buffer' })

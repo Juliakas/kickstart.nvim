@@ -1,15 +1,7 @@
----@module 'lazy'
----@type LazySpec
-return {
-	"NeogitOrg/neogit",
-	lazy = true,
-	dependencies = {
-		"sindrets/diffview.nvim",
+local gh = require('config.pack').gh
 
-		"nvim-telescope/telescope.nvim",
-	},
-	cmd = "Neogit",
-	keys = {
-		{ "<leader>gg", "<cmd>Neogit<cr>", desc = "Show Neogit UI" },
-	},
-}
+-- diffview and telescope are added earlier in init.lua
+vim.pack.add { gh 'NeogitOrg/neogit' }
+require('neogit').setup {}
+
+vim.keymap.set('n', '<leader>gg', '<cmd>Neogit<cr>', { desc = 'Show Neogit UI' })

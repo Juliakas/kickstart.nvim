@@ -9,12 +9,13 @@ Each concern lives in its own file so it's easy to find, change, or disable anyt
 
 ```
 ~/.config/nvim/
-├── init.lua                    # Entry point: leader keys, loads config.*, bootstraps lazy
+├── init.lua                    # Entry point: leader keys, loads config.*, then each plugin file
 ├── lua/
 │   ├── config/
 │   │   ├── options.lua         # Editor settings (line numbers, tabs, etc.)
 │   │   ├── keymaps.lua         # Key bindings + diagnostic configuration
-│   │   └── autocmds.lua        # Automatic actions on events (e.g. highlight on yank)
+│   │   ├── autocmds.lua        # Automatic actions on events (e.g. highlight on yank)
+│   │   └── pack.lua            # vim.pack build hooks (make, :TSUpdate) + gh() helper
 │   ├── plugins/                # One file per plugin
 │   │   ├── guess-indent.lua
 │   │   ├── which-key.lua
@@ -25,9 +26,12 @@ Each concern lives in its own file so it's easy to find, change, or disable anyt
 │   │   ├── catppuccin.lua
 │   │   ├── todo-comments.lua
 │   │   ├── mini.lua
+│   │   ├── gitsigns.lua
+│   │   ├── git-worktree.lua
+│   │   ├── diffview.lua
+│   │   ├── neogit.lua
 │   │   └── treesitter.lua
 │   ├── kickstart/plugins/      # Optional extras from kickstart (enable in init.lua)
-│   │   ├── gitsigns.lua        ✓ enabled
 │   │   ├── neo-tree.lua        ✓ enabled
 │   │   ├── fugitive.lua        ✓ enabled
 │   │   ├── autopairs.lua       (disabled)
@@ -35,7 +39,7 @@ Each concern lives in its own file so it's easy to find, change, or disable anyt
 │   │   ├── indent_line.lua     (disabled)
 │   │   └── lint.lua            (disabled)
 │   └── custom/plugins/         # Your own plugins go here
-└── lazy-lock.json              # Exact plugin versions (like package-lock.json)
+└── nvim-pack-lock.json         # Exact plugin revisions (like package-lock.json)
 ```
 
 ---
@@ -47,7 +51,8 @@ The entry point does three things then hands off to the plugin manager:
 1. **Sets leader keys** — `<Space>` is the leader. Every `<leader>x` keymap starts with Space.
    The leader must be set *before* any plugin loads.
 2. **Requires** `config.options`, `config.keymaps`, and `config.autocmds`.
-3. **Bootstraps lazy.nvim** — downloads the plugin manager if not present, then calls `lazy.setup()`.
+3. **Loads plugins** — requires `config.pack` (build hooks), then each `lua/plugins/*.lua` file in
+   dependency order. Each file installs its plugin with `vim.pack.add` and calls its `setup()`.
 
 ---
 
@@ -73,7 +78,7 @@ The entry point does three things then hands off to the plugin manager:
 | `vim.o.cursorline = true` | Highlight the entire line the cursor is on |
 | `vim.o.scrolloff = 10` | Always keep at least 10 lines visible above and below the cursor when scrolling |
 | `vim.o.confirm = true` | Instead of failing with `E37: No write since last change`, pop up a dialog asking whether to save |
-| `vim.o.shell` | Use `fish` on Linux, PowerShell on Windows for `:terminal` |
+| `vim.o.shell = "zsh"` | Shell used by `:terminal` and shell commands |
 | `vim.o.expandtab = true` | Press `<Tab>` to insert spaces, not a real tab character |
 | `vim.o.tabstop / softtabstop / shiftwidth = 2` | Indentation width is 2 spaces |
 | `vim.o.colorcolumn = '150'` | Draw a vertical line at column 150 as a soft line-length guide |
@@ -128,8 +133,9 @@ Autocommands (`autocmd`) are callbacks that run when specific events happen in N
 
 ## Plugins
 
-Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim). Run `:Lazy` to see
-their status, update them, or view their documentation. Run `:Lazy update` to update all plugins.
+Plugins are managed by `vim.pack`, Neovim's built-in plugin manager (`:help vim.pack`).
+Run `:lua vim.pack.update(nil, { offline = true })` to see their state, and
+`:lua vim.pack.update()` to update them.
 
 ---
 
@@ -305,7 +311,7 @@ Extends the built-in `a` (around) and `i` (inside) motions to work with more tar
 | Example | What it does |
 |---|---|
 | `va)` | Visually select **a**round **)**paren |
-| `yinq` | **Y**ank **i**nside **n**ext **q**uote |
+| `yiiq` | **Y**ank **i**nside next (**i**) **q**uote — `in`/`an` are taken by 0.12's incremental selection |
 | `ci'` | **C**hange **i**nside **'** quote |
 | `da,` | **D**elete **a** function **a**rgument (including the comma) |
 
@@ -345,7 +351,7 @@ Run `:TSInstallInfo` to see all available parsers.
 
 These are opt-in plugins. To enable one, uncomment the relevant line in `init.lua`.
 
-### gitsigns.nvim ✓ enabled
+### gitsigns.nvim · `lua/plugins/gitsigns.lua`
 
 Shows git status in the sign column (added/changed/deleted lines) and provides
 keymaps for working with individual hunks (chunks of changed lines).
@@ -354,16 +360,20 @@ keymaps for working with individual hunks (chunks of changed lines).
 |---|---|
 | `]c` | Jump to the next changed hunk |
 | `[c` | Jump to the previous changed hunk |
-| `<leader>hs` | Stage the current hunk (add it to the git index) |
+| `<leader>hs` | Stage the current hunk, or unstage it if already staged |
 | `<leader>hr` | Reset the hunk (discard the change) |
 | `<leader>hS` | Stage the entire buffer |
 | `<leader>hR` | Reset the entire buffer |
 | `<leader>hp` | Preview the hunk in a floating window |
-| `<leader>hb` | Show git blame for the current line |
+| `<leader>hi` | Preview the hunk inline |
+| `<leader>hb` | Show full git blame for the current line |
 | `<leader>hd` | Diff the buffer against the git index |
 | `<leader>hD` | Diff the buffer against the last commit |
+| `<leader>hq` / `<leader>hQ` | Hunks of this file / the whole repo in the quickfix list |
 | `<leader>tb` | Toggle inline git blame on the current line |
+| `<leader>tw` | Toggle intra-line word diff |
 | `<leader>tD` | Toggle showing deleted lines inline |
+| `ih` | Text object: inside hunk (e.g. `vih`, `dih`) |
 
 ---
 
@@ -423,22 +433,22 @@ Enable by uncommenting `require 'kickstart.plugins.debug'` in `init.lua`.
 
 ## Adding your own plugins
 
-Create a new `.lua` file in `lua/plugins/` returning a lazy plugin spec:
+Create a new `.lua` file in `lua/plugins/` that installs and sets up the plugin:
 
 ```lua
 -- lua/plugins/my-plugin.lua
-return {
-  'author/my-plugin',
-  opts = {
-    -- plugin settings here
-  },
+local gh = require('config.pack').gh
+
+vim.pack.add { gh 'author/my-plugin' }
+require('my-plugin').setup {
+  -- plugin settings here
 }
 ```
 
-lazy.nvim will pick it up automatically on the next launch (or after `:Lazy reload`).
+Then add `require 'plugins.my-plugin'` to `init.lua`, after any plugin it depends on.
 
 Alternatively, add plugins to `lua/custom/plugins/` and uncomment
-`{ import = 'custom.plugins' }` in `init.lua`.
+`require 'custom.plugins'` in `init.lua` (those files load in no particular order).
 
 ---
 
@@ -446,7 +456,7 @@ Alternatively, add plugins to `lua/custom/plugins/` and uncomment
 
 | Command | What it does |
 |---|---|
-| `:Lazy` | Plugin manager UI — view, update, profile plugins |
+| `:lua vim.pack.update()` | Update plugins (review the diff, then `:write` to apply) |
 | `:Mason` | Install/manage LSP servers, formatters, linters |
 | `:checkhealth` | Diagnose issues with Neovim and plugins |
 | `:help <topic>` | Open the built-in documentation |

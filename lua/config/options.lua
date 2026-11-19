@@ -8,16 +8,14 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 -- Enable mouse support (useful for resizing splits, clicking, scrolling)
-vim.o.mouse = "a"
+vim.o.mouse = 'a'
 
 -- Don't show --INSERT-- / --NORMAL-- in the command line (statusline shows it)
 vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim so yank/paste work with the system clipboard.
 -- Scheduled after UiEnter to avoid slowing down startup.
-vim.schedule(function()
-	vim.o.clipboard = "unnamedplus"
-end)
+vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
 -- Indent wrapped lines to match the start of the line
 vim.o.breakindent = true
@@ -30,7 +28,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Always show the sign column so the editor doesn't shift when diagnostics appear
-vim.o.signcolumn = "yes"
+vim.o.signcolumn = 'yes'
 
 -- Reduce the time before CursorHold events fire (used by LSP for highlights, etc.)
 vim.o.updatetime = 250
@@ -44,10 +42,10 @@ vim.o.splitbelow = true
 
 -- Render special whitespace characters visually
 vim.o.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Show a live preview of :substitute replacements as you type
-vim.o.inccommand = "split"
+vim.o.inccommand = 'split'
 
 -- Highlight the line the cursor is currently on
 vim.o.cursorline = true
@@ -68,12 +66,8 @@ vim.g.neovide_scroll_animation_length = 0.00
 -- Ask to save instead of failing when closing a modified buffer
 vim.o.confirm = true
 
--- Use fish shell on Linux, PowerShell on Windows (for :terminal and shell commands)
-if vim.fn.has("linux") then
-	vim.o.shell = "zsh"
-else
-	vim.o.shell = vim.fn.executable("pwsh") == 1 and "pwsh" or "powershell"
-end
+-- Shell for :terminal and shell commands
+vim.o.shell = 'zsh'
 
 -- Use spaces instead of tabs, with a width of 2
 vim.o.expandtab = true
@@ -82,7 +76,7 @@ vim.o.softtabstop = 2
 vim.o.shiftwidth = 2
 
 -- Draw a vertical ruler at column 150 as a line-length guide
-vim.o.colorcolumn = "150"
+vim.o.colorcolumn = '150'
 
 -- Wrap long lines visually (doesn't insert line breaks, just wraps display)
 vim.o.wrap = true

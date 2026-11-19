@@ -1,3 +1,6 @@
+-- Enable faster startup by caching compiled Lua modules
+vim.loader.enable()
+
 -- Set <space> as the leader key
 -- NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 -- See `:help mapleader`
@@ -12,63 +15,43 @@ require 'config.options'
 require 'config.keymaps'
 require 'config.autocmds'
 
--- [[ Install `lazy.nvim` plugin manager ]]
--- See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-  if vim.v.shell_error ~= 0 then error('Error cloning lazy.nvim:\n' .. out) end
-end
-
----@type vim.Option
-local rtp = vim.opt.rtp
-rtp:prepend(lazypath)
-
--- [[ Configure and install plugins ]]
+-- [[ Plugins via `vim.pack` ]]
+-- `vim.pack` is Neovim's built-in plugin manager. See `:help vim.pack`.
+-- Build hooks (make, :TSUpdate) live in lua/config/pack.lua and must load first.
 --
--- Each plugin lives in its own file under lua/plugins/.
--- To add a new plugin, create a new file there returning a lazy plugin spec.
+--  :lua vim.pack.update(nil, { offline = true }) → view plugin state
+--  :lua vim.pack.update()                        → update all plugins
 --
--- Kickstart "extra" plugins are in lua/kickstart/plugins/.
--- The three below are enabled; uncomment others to activate them.
---
---  :Lazy        → view plugin status
---  :Lazy update → update all plugins
-require('lazy').setup({
-  { import = 'plugins' },
+-- Each plugin lives in its own file under lua/plugins/. Order matters: a file can
+-- only `require` plugins that an earlier file already added.
+require 'config.pack'
 
-  -- Enabled kickstart extras
-  require 'kickstart.plugins.neo-tree',
-  require 'kickstart.plugins.gitsigns',
-  require 'kickstart.plugins.fugitive',
+require 'plugins.catppuccin'
+require 'plugins.mini' -- mini.icons must come before plugins that want web-devicons
+require 'plugins.guess-indent'
+require 'plugins.gitsigns'
+require 'plugins.which-key'
+require 'plugins.todo-comments'
+require 'plugins.telescope'
+require 'plugins.git-worktree' -- needs telescope
+require 'plugins.lsp'
+require 'plugins.conform'
+require 'plugins.blink-cmp'
+require 'plugins.treesitter'
+require 'plugins.diffview'
+require 'plugins.neogit' -- needs diffview and telescope
 
-  -- Optional extras (uncomment to enable, then restart nvim):
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+-- Enabled kickstart extras
+require 'kickstart.plugins.neo-tree'
+require 'kickstart.plugins.fugitive'
 
-  -- You can add your own plugins in lua/custom/plugins/
-  -- { import = 'custom.plugins' },
-}, { ---@diagnostic disable-line: missing-fields
-  ui = {
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
-    },
-  },
-})
+-- Optional extras (uncomment to enable, then restart nvim):
+-- require 'kickstart.plugins.autopairs'
+-- require 'kickstart.plugins.debug'
+-- require 'kickstart.plugins.indent_line'
+-- require 'kickstart.plugins.lint'
+
+-- You can add your own plugins in lua/custom/plugins/
+-- require 'custom.plugins'
 
 -- vim: ts=2 sts=2 sw=2 et
