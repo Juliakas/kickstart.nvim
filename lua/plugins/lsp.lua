@@ -136,7 +136,7 @@ vim.lsp.config('eslint', {
 
 -- Tell Mason to install all servers listed above, then enable them
 local ensure_installed = vim.tbl_keys(servers or {})
-vim.list_extend(ensure_installed, { 'prettierd' })
+vim.list_extend(ensure_installed, { 'prettierd', 'js-debug-adapter' }) -- js-debug-adapter: JS/TS debugger used by plugins/debug.lua
 require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
 for name, server in pairs(servers) do

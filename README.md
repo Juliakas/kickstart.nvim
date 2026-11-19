@@ -30,15 +30,17 @@ Each concern lives in its own file so it's easy to find, change, or disable anyt
 │   │   ├── git-worktree.lua
 │   │   ├── diffview.lua
 │   │   ├── neogit.lua
+│   │   ├── neo-tree.lua
+│   │   ├── fugitive.lua
+│   │   ├── debug.lua           # JS/TS debugging (nvim-dap + js-debug)
 │   │   └── treesitter.lua
-│   ├── kickstart/plugins/      # Optional extras from kickstart (enable in init.lua)
-│   │   ├── neo-tree.lua        ✓ enabled
-│   │   ├── fugitive.lua        ✓ enabled
-│   │   ├── autopairs.lua       (disabled)
-│   │   ├── debug.lua           (disabled)
-│   │   ├── indent_line.lua     (disabled)
-│   │   └── lint.lua            (disabled)
-│   └── custom/plugins/         # Your own plugins go here
+│   └── kickstart/              # Upstream kickstart files, kept unedited so syncs stay clean
+│       ├── health.lua          # :checkhealth kickstart
+│       └── plugins/            # Optional extras, all disabled (enable in init.lua)
+│           ├── autopairs.lua
+│           ├── debug.lua       # Go example
+│           ├── indent_line.lua
+│           └── lint.lua
 └── nvim-pack-lock.json         # Exact plugin revisions (like package-lock.json)
 ```
 
@@ -347,10 +349,6 @@ Run `:TSInstallInfo` to see all available parsers.
 
 ---
 
-## Kickstart extras · `lua/kickstart/plugins/`
-
-These are opt-in plugins. To enable one, uncomment the relevant line in `init.lua`.
-
 ### gitsigns.nvim · `lua/plugins/gitsigns.lua`
 
 Shows git status in the sign column (added/changed/deleted lines) and provides
@@ -377,7 +375,7 @@ keymaps for working with individual hunks (chunks of changed lines).
 
 ---
 
-### neo-tree.nvim ✓ enabled
+### neo-tree.nvim · `lua/plugins/neo-tree.lua`
 
 A file explorer sidebar. Press `\` to open it, press `\` again inside it to close it.
 
@@ -386,7 +384,7 @@ The explorer shows the project's file tree. You can navigate with `j`/`k`, open 
 
 ---
 
-### vim-fugitive ✓ enabled
+### vim-fugitive · `lua/plugins/fugitive.lua`
 
 A full Git client inside Neovim. Run `:Git` to open the status window, which shows staged
 and unstaged changes. From there you can stage, commit, push, pull, and more.
@@ -402,6 +400,31 @@ Common commands:
 | `:GdiffSplit` | Diff the current file against HEAD in a split |
 
 ---
+
+### nvim-dap — debugging · `lua/plugins/debug.lua`
+
+Debugs JavaScript and TypeScript with js-debug, the debugger VS Code uses (Mason installs it).
+`<leader>dc` lists what you can run: the project's `.vscode/launch.json` configurations, plus
+every `package.json` script run through the project's package manager. `<leader>dn` picks a script
+and asks for parameters: leading `KEY=value` words become environment variables, the rest are
+passed to the script (e.g. `LOG_LEVEL=debug --offset 42`).
+
+| Keymap | What it does |
+|---|---|
+| `<leader>dc` | Start, or continue |
+| `<leader>di` / `<leader>do` / `<leader>dO` | Step into / over / out |
+| `<leader>dt` | Terminate the session |
+| `<leader>db` / `<leader>dB` | Toggle a breakpoint / set a conditional one |
+| `<leader>du` | Toggle the debug UI (reopens the last session's output) |
+| `<leader>de` | Evaluate the expression under the cursor or the selection |
+| `<leader>dn` | Debug a `package.json` script with env / args |
+| `<leader>dl` | Run the last configuration again |
+
+---
+
+## Kickstart extras · `lua/kickstart/plugins/`
+
+These are opt-in plugins. To enable one, uncomment the relevant line in `init.lua`.
 
 ### autopairs (disabled)
 
@@ -424,10 +447,10 @@ Enable by uncommenting `require 'kickstart.plugins.lint'` in `init.lua`.
 
 ---
 
-### nvim-dap — Debug Adapter Protocol (disabled)
+### nvim-dap for Go (disabled)
 
-A full debugger UI for Neovim. Pre-configured for Go. Requires additional setup per language.
-Enable by uncommenting `require 'kickstart.plugins.debug'` in `init.lua`.
+Kickstart's Go debugging example. Its keymaps differ from `lua/plugins/debug.lua`, which already
+sets up nvim-dap, so merge the Go parts into that file rather than enabling both.
 
 ---
 
@@ -446,9 +469,6 @@ require('my-plugin').setup {
 ```
 
 Then add `require 'plugins.my-plugin'` to `init.lua`, after any plugin it depends on.
-
-Alternatively, add plugins to `lua/custom/plugins/` and uncomment
-`require 'custom.plugins'` in `init.lua` (those files load in no particular order).
 
 ---
 

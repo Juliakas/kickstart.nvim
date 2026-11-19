@@ -35,23 +35,19 @@ require 'plugins.todo-comments'
 require 'plugins.telescope'
 require 'plugins.git-worktree' -- needs telescope
 require 'plugins.lsp'
+require 'plugins.debug' -- needs mason (set up in plugins.lsp)
 require 'plugins.conform'
 require 'plugins.blink-cmp'
 require 'plugins.treesitter'
 require 'plugins.diffview'
 require 'plugins.neogit' -- needs diffview and telescope
+require 'plugins.neo-tree'
+require 'plugins.fugitive'
 
--- Enabled kickstart extras
-require 'kickstart.plugins.neo-tree'
-require 'kickstart.plugins.fugitive'
-
--- Optional extras (uncomment to enable, then restart nvim):
+-- Optional kickstart extras, kept unedited in lua/kickstart/plugins/ (uncomment to enable):
 -- require 'kickstart.plugins.autopairs'
--- require 'kickstart.plugins.debug'
+-- require 'kickstart.plugins.debug' -- Go example; conflicts with plugins.debug, merge instead
 -- require 'kickstart.plugins.indent_line'
 -- require 'kickstart.plugins.lint'
-
--- You can add your own plugins in lua/custom/plugins/
--- require 'custom.plugins'
 
 -- vim: ts=2 sts=2 sw=2 et
